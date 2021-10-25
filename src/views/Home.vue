@@ -13,6 +13,10 @@
         :user="user"
       />
     </div>
+    <Loader v-if="loading"/>
+    <div class="load-more" @click="loadMore">
+      Load more
+    </div>
   </div>
 
 </div>
@@ -22,15 +26,24 @@
 
 
 import UserComponent from "../components/core/UserComponent";
+import Loader from "../components/core/Loader";
 export default {
   name: 'Home',
-  components: {UserComponent},
+  components: {Loader, UserComponent},
   data: () => ({
-    users: []
+    users: [],
+    perPage: 7,
+    loading: false,
   }),
   async mounted() {
-   this.users = await this.$store.dispatch('getUsers')
-    console.log(this.users)
+    this.loading = true
+   this.users = await this.$store.dispatch('getUsers', {startAt: this.users.length.toString(), endAt: this.perPage.toString()})
+    this.loading = false
+  },
+  methods: {
+    async loadMore() {
+
+    }
   }
 }
 </script>
@@ -54,8 +67,36 @@ export default {
       justify-content: space-around;
       flex-wrap: wrap;
       .user-component {
-        width: calc(20% - 20px);
+        width: calc(25% - 20px);
         margin-bottom: 20px;
+        @media #{$x-md} {
+          width: calc(33.333% - 20px);
+        }
+        @media #{$sm} {
+          width: calc(50% - 20px);
+        }
+        @media #{$x-sm} {
+          width: 100%;
+        }
+      }
+    }
+    .load-more {
+      background-color: $blue;
+      color: white;
+      font-weight: bold;
+      display: flex;
+      width: max-content;
+      padding: 10px 24px;
+      border-radius: 4px;
+      margin-right: auto;
+      margin-left: auto;
+      margin-top: 30px;
+      transition: all 0.3s ease-in-out;
+      border: 1px solid $blue;
+      &:hover {
+        cursor: pointer;
+        color: $blue;
+        background-color: white;
       }
     }
   }

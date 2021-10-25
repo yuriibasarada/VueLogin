@@ -26,9 +26,12 @@ export default {
                     .catch(e => console.log(e));
             }
         },
-        async getUsers() {
+        async getUsers({commit}, {startAt, endAt}) {
             try {
-               return (await firebase.database().ref(`/users`).orderByKey().endAt('9').get()).toJSON()
+               return (await firebase.database().ref(`/users`).orderByKey()
+                   .startAt(startAt)
+                   .endAt(endAt)
+                   .get()).toJSON()
             } catch (e) {
                 console.log(e)
             }
