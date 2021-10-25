@@ -3,7 +3,7 @@ import App from './App.vue'
 import VueRouter from 'vue-router'
 import router from './router'
 
-// import "@/assets/scss/styles.scss"
+import "@/assets/scss/styles.scss"
 
 import firebase from "firebase/compat";
 import store from './store'
