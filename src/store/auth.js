@@ -2,20 +2,18 @@ import firebase from "firebase/compat";
 
 export default {
     actions: {
-        async login({commit} ,email) {
+        async login({commit}, email) {
             let actionCodeSettings = {
-                url: `https://${process.env.VUE_APP_URL}`,
+                url: `http://${process.env.VUE_APP_URL}/login`,
                 handleCodeInApp: true
             };
-            try {
-                await firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
-                    .then(() => {
-                        window.localStorage.setItem('emailForSignIn', email);
-                    })
-                    .catch(e => console.log(e))
-            } catch (e) {
-                console.log(e)
-            }
+            await firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
+                .then(() => window.localStorage.setItem('emailForSignIn', email))
+                .catch(e => {
+                })
+        },
+        async logout() {
+            await firebase.auth().signOut()
         },
         async authEmailLink({commit}) {
             if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
@@ -23,9 +21,16 @@ export default {
                 if (!email) {
                     email = window.prompt('Please provide your email for confirmation');
                 }
-                firebase.auth().signInWithEmailLink(email, window.location.href)
+                await firebase.auth().signInWithEmailLink(email, window.location.href)
                     .then(r => window.localStorage.removeItem('emailForSignIn'))
                     .catch(e => console.log(e));
+            }
+        },
+        async getUsers() {
+            try {
+               return (await firebase.database().ref(`/users`).orderByKey().endAt('9').get()).toJSON()
+            } catch (e) {
+                console.log(e)
             }
         }
     },
